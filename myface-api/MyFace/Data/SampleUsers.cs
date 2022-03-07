@@ -149,7 +149,7 @@ namespace MyFace.Data
                 Email = Data[index][3],
                 ProfileImageUrl = ImageGenerator.GetProfileImage(Data[index][2]),
                 CoverImageUrl = ImageGenerator.GetCoverImage(index),
-                HahedPassword = hashed,
+                HashedPassword = hashed,
                 Salt = saltString,
             };
         }
