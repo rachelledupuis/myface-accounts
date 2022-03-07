@@ -1,17 +1,19 @@
+using MyFace.Data;
 using System;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using MyFace.Data;
+
 
 namespace MyFace.Helpers
+
 {
     public class PasswordHelper
-    {
-        public static HashedPasswordSalt GetHashedPassword(string password)
-        {
-            string newPassword = password;
 
-             // generate a 128-bit salt using a cryptographically strong random sequence of nonzero values
+    {
+    public static HashedPasswordSalt GetHashedPassword(string password)
+    {
+        string newPassword = password;
+          // generate a 128-bit salt using a cryptographically strong random sequence of nonzero values
             byte[] salt = new byte[128 / 8];
             using (var rngCsp = new RNGCryptoServiceProvider())
             {
@@ -27,7 +29,10 @@ namespace MyFace.Helpers
                 iterationCount: 100000,
                 numBytesRequested: 256 / 8));
 
-            return new HashedPasswordSalt(hashed, saltString);
-        }
+                return new HashedPasswordSalt (hashed, saltString);
+  
     }
+    }
+
 }
+
