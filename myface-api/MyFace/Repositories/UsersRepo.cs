@@ -66,7 +66,8 @@ namespace MyFace.Repositories
         }
         public User Create(CreateUserRequest newUser)
         {
-            var hashed = PasswordHelper.GetHashedPassword(newUser.Password);
+            var salt = PasswordHelper.GetRandomSalt();
+            var hashed = PasswordHelper.GetHashedPassword(newUser.Password, salt);
 
             var insertResponse = _context.Users.Add(new User
             {

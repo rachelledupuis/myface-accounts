@@ -124,7 +124,8 @@ namespace MyFace.Data
         private static User CreateRandomUser(int index)
 
         {
-            var hashed = PasswordHelper.GetHashedPassword("password123");
+            var salt = PasswordHelper.GetRandomSalt();
+            var hashed = PasswordHelper.GetHashedPassword("password123", salt);
 
             return new User
             {

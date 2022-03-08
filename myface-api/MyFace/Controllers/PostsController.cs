@@ -80,8 +80,9 @@ namespace MyFace.Controllers
             {
                 return Unauthorized("The username/password combination does not match");
             }
-
-            var hashed = PasswordHelper.GetHashedPassword(password);
+            
+            var salt = Convert.FromBase64String(user.Salt);
+            var hashed = PasswordHelper.GetHashedPassword(password, salt);
 
             // hash user's password and check it
 
