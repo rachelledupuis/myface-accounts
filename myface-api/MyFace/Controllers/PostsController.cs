@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System;
 using Microsoft.AspNetCore.Http;
 using MyFace.Helpers;
+using MyFace.Services;
 
 namespace MyFace.Controllers
 {
@@ -60,26 +61,13 @@ namespace MyFace.Controllers
             var username = usernamePassword.Username;
             var password = usernamePassword.Password;
 
-            User user;
-            try
+            var auth = new AuthService(_users);
+            if (auth.IsValidUsernameAndPassword(username, password) == false)
             {
-                user = _users.GetByUsername(username);
-            }
-            catch (InvalidOperationException e)
-            {
-                return Unauthorized("The username/password combination does not match");
-            }
-            
-            var salt = Convert.FromBase64String(user.Salt);
-            var hashed = PasswordHelper.GetHashedPassword(password, salt);
-
-            // hash user's password and check it
-
-            if (hashed.HashedPassword != user.HashedPassword)
-            {
-                return Unauthorized("The username/password combination does not match");
+                return Unauthorized();
             }
 
+            User user = _users.GetByUsername(username);
             if (user.Id != newPost.UserId)
             {
                 return StatusCode(
