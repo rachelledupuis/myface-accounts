@@ -11,6 +11,7 @@ namespace MyFace.Repositories
         IEnumerable<User> Search(UserSearchRequest search);
         int Count(UserSearchRequest search);
         User GetById(int id);
+        User GetByUsername(string userName);
         User Create(CreateUserRequest newUser);
         User Update(int id, UpdateUserRequest update);
         void Delete(int id);
@@ -58,6 +59,11 @@ namespace MyFace.Repositories
                 .Single(user => user.Id == id);
         }
 
+        public User GetByUsername(string userName)
+        {
+            return _context.Users
+                .Single(user => user.Username == userName);
+        }
         public User Create(CreateUserRequest newUser)
         {
             var hashed = PasswordHelper.GetHashedPassword(newUser.Password);

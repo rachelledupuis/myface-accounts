@@ -1,7 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyFace.Models.Request;
 using MyFace.Models.Response;
+using MyFace.Models.Database;
 using MyFace.Repositories;
+using Microsoft.Extensions.Primitives;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using System;
+using Microsoft.AspNetCore.Http;
+using MyFace.Helpers;
 
 namespace MyFace.Controllers
 {
@@ -10,10 +16,12 @@ namespace MyFace.Controllers
     public class PostsController : ControllerBase
     {    
         private readonly IPostsRepo _posts;
+        private readonly IUsersRepo _users;
 
-        public PostsController(IPostsRepo posts)
+        public PostsController(IPostsRepo posts, IUsersRepo users)
         {
             _posts = posts;
+            _users = users;
         }
         
         [HttpGet("")]
@@ -38,9 +46,79 @@ namespace MyFace.Controllers
             {
                 return BadRequest(ModelState);
             }
-            
-            var post = _posts.Create(newPost);
 
+            var authHeader = Request.Headers["Authorization"];
+
+            if (authHeader == StringValues.Empty)
+            {
+                return Unauthorized();
+            }
+
+            var authHeaderString = authHeader[0];
+
+            // authHeader looks like "Basic {base 64 encoded string}"
+
+            var authHeaderSplit = authHeaderString.Split(' ');
+            var authType = authHeaderSplit[0];
+            var encodedUsernamePassword = authHeaderSplit[1];
+
+            var usernamePassword = System.Text.Encoding.UTF8.GetString(
+                Convert.FromBase64String(encodedUsernamePassword)
+            );
+
+            var usernamePasswordArray = usernamePassword.Split(':');
+
+            var username = usernamePasswordArray[0];
+            var password = usernamePasswordArray[1];
+
+            User user;
+            try
+            {
+                user = _users.GetByUsername(username);
+            }
+            catch (InvalidOperationException e)
+            {
+                return Unauthorized("The username/password combination does not match");
+            }
+
+            var hashed = PasswordHelper.GetHashedPassword(password);
+
+            // hash user's password and check it
+
+            if (hashed.HashedPassword != user.HashedPassword)
+            {
+                return Unauthorized("The username/password combination does not match");
+            }
+
+            if (user.Id != newPost.UserId)
+            {
+                return StatusCode(
+                    StatusCodes.Status403Forbidden,
+                    "You are not allowed to create a post for a different user"
+                );
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            var post = _posts.Create(newPost);
             var url = Url.Action("GetById", new { id = post.Id });
             var postResponse = new PostResponse(post);
             return Created(url, postResponse);
