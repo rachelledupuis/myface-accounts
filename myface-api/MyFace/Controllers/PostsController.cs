@@ -48,28 +48,17 @@ namespace MyFace.Controllers
             }
 
             var authHeader = Request.Headers["Authorization"];
-
+            
             if (authHeader == StringValues.Empty)
             {
                 return Unauthorized();
             }
 
             var authHeaderString = authHeader[0];
+            var usernamePassword = AuthHelper.GetUsernamePasswordFromAuth(authHeaderString);
 
-            // authHeader looks like "Basic {base 64 encoded string}"
-
-            var authHeaderSplit = authHeaderString.Split(' ');
-            var authType = authHeaderSplit[0];
-            var encodedUsernamePassword = authHeaderSplit[1];
-
-            var usernamePassword = System.Text.Encoding.UTF8.GetString(
-                Convert.FromBase64String(encodedUsernamePassword)
-            );
-
-            var usernamePasswordArray = usernamePassword.Split(':');
-
-            var username = usernamePasswordArray[0];
-            var password = usernamePasswordArray[1];
+            var username = usernamePassword.Username;
+            var password = usernamePassword.Password;
 
             User user;
             try
@@ -98,26 +87,6 @@ namespace MyFace.Controllers
                     "You are not allowed to create a post for a different user"
                 );
             }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
             var post = _posts.Create(newPost);
             var url = Url.Action("GetById", new { id = post.Id });
