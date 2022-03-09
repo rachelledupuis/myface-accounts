@@ -28,6 +28,26 @@ namespace MyFace.Controllers
         [HttpGet("")]
         public ActionResult<PostListResponse> Search([FromQuery] PostSearchRequest searchRequest)
         {
+
+            var authHeader = Request.Headers["Authorization"];
+            
+            if (authHeader == StringValues.Empty)
+            {
+                return Unauthorized();
+            }
+
+            var authHeaderString = authHeader[0];
+            var usernamePassword = AuthHelper.GetUsernamePasswordFromAuth(authHeaderString);
+
+            var username = usernamePassword.Username;
+            var password = usernamePassword.Password;
+
+            var auth = new AuthService(_users);
+            if (auth.IsValidUsernameAndPassword(username, password) == false)
+            {
+                return Unauthorized();
+            }
+
             var posts = _posts.Search(searchRequest);
             var postCount = _posts.Count(searchRequest);
             return PostListResponse.Create(searchRequest, posts, postCount);
@@ -36,6 +56,24 @@ namespace MyFace.Controllers
         [HttpGet("{id}")]
         public ActionResult<PostResponse> GetById([FromRoute] int id)
         {
+            var authHeader = Request.Headers["Authorization"];
+            
+            if (authHeader == StringValues.Empty)
+            {
+                return Unauthorized();
+            }
+
+            var authHeaderString = authHeader[0];
+            var usernamePassword = AuthHelper.GetUsernamePasswordFromAuth(authHeaderString);
+
+            var username = usernamePassword.Username;
+            var password = usernamePassword.Password;
+
+            var auth = new AuthService(_users);
+            if (auth.IsValidUsernameAndPassword(username, password) == false)
+            {
+                return Unauthorized();
+            }
             var post = _posts.GetById(id);
             return new PostResponse(post);
         }
@@ -89,6 +127,35 @@ namespace MyFace.Controllers
             {
                 return BadRequest(ModelState);
             }
+            var authHeader = Request.Headers["Authorization"];
+
+            if (authHeader == StringValues.Empty)
+            {
+                return Unauthorized();
+            }
+
+            var authHeaderString = authHeader[0];
+            var usernamePassword = AuthHelper.GetUsernamePasswordFromAuth(authHeaderString);
+
+            var username = usernamePassword.Username;
+            var password = usernamePassword.Password;
+
+            var auth = new AuthService(_users);
+            if (auth.IsValidUsernameAndPassword(username, password) == false)
+            {
+                return Unauthorized();
+            }
+
+            User user = _users.GetByUsername(username);
+            Post userPost = _posts.GetById(id);
+            
+            if (user.Id != userPost.UserId)
+            {
+                return StatusCode(
+                    StatusCodes.Status403Forbidden,
+                    "You are not allowed to create a post for a different user"
+                );
+            }
 
             var post = _posts.Update(id, update);
             return new PostResponse(post);
@@ -96,7 +163,38 @@ namespace MyFace.Controllers
 
         [HttpDelete("{id}")]
         public IActionResult Delete([FromRoute] int id)
+
         {
+
+            var authHeader = Request.Headers["Authorization"];
+
+            if (authHeader == StringValues.Empty)
+            {
+                return Unauthorized();
+            }
+
+            var authHeaderString = authHeader[0];
+            var usernamePassword = AuthHelper.GetUsernamePasswordFromAuth(authHeaderString);
+
+            var username = usernamePassword.Username;
+            var password = usernamePassword.Password;
+
+            var auth = new AuthService(_users);
+            if (auth.IsValidUsernameAndPassword(username, password) == false)
+            {
+                return Unauthorized();
+            }
+
+            User user = _users.GetByUsername(username);
+            Post userPost = _posts.GetById(id);
+            
+            if (user.Id != userPost.UserId)
+            {
+                return StatusCode(
+                    StatusCodes.Status403Forbidden,
+                    "You are not allowed to create a post for a different user"
+                );
+            }
             _posts.Delete(id);
             return Ok();
         }
