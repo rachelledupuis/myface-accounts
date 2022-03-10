@@ -5,8 +5,8 @@ import {LoginContext} from '../LoginManager/LoginManager';
 
 interface UserDetailsProps {
     userId: string;
-    userName: string;
-    password: string;
+    // userName: string;
+    // password: string;
 }
 
 export function UserDetails(props: UserDetailsProps): JSX.Element {
