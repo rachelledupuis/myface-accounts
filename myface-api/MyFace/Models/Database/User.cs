@@ -2,9 +2,15 @@
 
 namespace MyFace.Models.Database
 {
-    public class User
+public enum UserType
+    {
+        MEMBER,
+        ADMIN,
+    }
+        public class User
     {
         public int Id { get; set; }
+        public UserType Role { get; set; }
 
         public string FirstName { get; set; }
         public string LastName { get; set; }
