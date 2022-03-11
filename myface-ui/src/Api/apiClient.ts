@@ -37,7 +37,7 @@ export interface Post {
 export interface NewPost {
     message: string;
     imageUrl: string;
-    userId: number;
+    // userId: number;
 }
 
 function getAuthorizationHeader(username: string, password: string)

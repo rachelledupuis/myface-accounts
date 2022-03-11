@@ -18,7 +18,8 @@ export function CreatePostForm(): JSX.Element {
     function submitForm(event: FormEvent) {
         event.preventDefault();
         setStatus("SUBMITTING");
-        createPost({message, imageUrl, userId: parseInt(userId)}, userName as string, password as string)
+        // createPost({message, imageUrl, userId: parseInt(userId)}, userName as string, password as string)
+        createPost({message, imageUrl}, userName as string, password as string)
             .then(() => setStatus("FINISHED"))
             .catch(() => {
                 logOut();
@@ -44,11 +45,11 @@ export function CreatePostForm(): JSX.Element {
                 Image URL
                 <input className="form-input" value={imageUrl} onChange={event => setImageUrl(event.target.value)}/>
             </label>
-
+{/* 
             <label className="form-label">
                 User ID
                 <input className="form-input" value={userId} onChange={event => setUserId(event.target.value)}/>
-            </label>
+            </label> */}
 
             <button className="submit-button" disabled={status === "SUBMITTING"} type="submit">Create Post</button>
             {status === "ERROR" && <p>Something went wrong! Please try again.</p>}
