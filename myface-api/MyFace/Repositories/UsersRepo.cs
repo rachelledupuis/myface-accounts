@@ -95,6 +95,7 @@ namespace MyFace.Repositories
             user.Email = update.Email;
             user.ProfileImageUrl = update.ProfileImageUrl;
             user.CoverImageUrl = update.CoverImageUrl;
+            user.Role = update.Role;
 
             _context.Users.Update(user);
             _context.SaveChanges();

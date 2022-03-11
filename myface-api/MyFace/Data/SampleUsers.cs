@@ -137,6 +137,7 @@ namespace MyFace.Data
                 CoverImageUrl = ImageGenerator.GetCoverImage(index),
                 HashedPassword = hashed.HashedPassword,
                 Salt = hashed.Salt,
+                Role = UserType.MEMBER,
             };
         }
     }

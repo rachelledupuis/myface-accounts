@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using MyFace.Models.Database;
 
 namespace MyFace.Models.Request
 {
@@ -26,5 +27,7 @@ namespace MyFace.Models.Request
         [Required]
         [StringLength(16, MinimumLength = 8)]
         public string Password { get; set; }
+        //public UserType Role { get; set; }
+
     }
 }

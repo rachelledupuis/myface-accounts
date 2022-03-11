@@ -134,7 +134,7 @@ namespace MyFace.Controllers
             User currentUser = _users.GetByUsername(username);
         
             
-            if (currentUser.Id != id)
+            if (currentUser.Role != UserType.ADMIN)
             {
                 return StatusCode(
                     StatusCodes.Status403Forbidden,
