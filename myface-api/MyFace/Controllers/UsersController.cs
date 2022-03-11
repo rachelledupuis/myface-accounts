@@ -144,5 +144,45 @@ namespace MyFace.Controllers
             _users.Delete(id);
             return Ok();
         }
+        [HttpPatch("{id}/update/role")]
+        public ActionResult<UserResponse> UpdateRole([FromRoute] int id, [FromBody] UpdateUserRoleRequest update)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var authHeader = Request.Headers["Authorization"];
+
+            if (authHeader == StringValues.Empty)
+            {
+                return Unauthorized("Test 1");
+            }
+
+            var authHeaderString = authHeader[0];
+            var usernamePassword = AuthHelper.GetUsernamePasswordFromAuth(authHeaderString);
+
+            var username = usernamePassword.Username;
+            var password = usernamePassword.Password;
+
+            var auth = new AuthService(_users);
+            if (auth.IsValidUsernameAndPassword(username, password) == false)
+            {
+                return Unauthorized("Test 2");
+            }
+
+            User currentUser = _users.GetByUsername(username);
+        
+            
+            if (currentUser.Role != UserType.ADMIN)
+            {
+                return StatusCode(
+                    StatusCodes.Status403Forbidden,
+                    "You are not allowed to update a user's admin status"
+                );
+            }
+
+            var user = _users.UpdateRole(id, update);
+            return new UserResponse(user);
+        }
     }
 }

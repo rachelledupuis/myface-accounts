@@ -14,6 +14,7 @@ namespace MyFace.Repositories
         User GetByUsername(string userName);
         User Create(CreateUserRequest newUser);
         User Update(int id, UpdateUserRequest update);
+        User UpdateRole(int id, UpdateUserRoleRequest update);
         void Delete(int id);
     }
     
@@ -79,6 +80,7 @@ namespace MyFace.Repositories
                 CoverImageUrl = newUser.CoverImageUrl,
                 HashedPassword = hashed.HashedPassword,
                 Salt = hashed.Salt,
+                Role = newUser.Role,
             });
             _context.SaveChanges();
 
@@ -95,6 +97,16 @@ namespace MyFace.Repositories
             user.Email = update.Email;
             user.ProfileImageUrl = update.ProfileImageUrl;
             user.CoverImageUrl = update.CoverImageUrl;
+
+            _context.Users.Update(user);
+            _context.SaveChanges();
+
+            return user;
+        }
+        public User UpdateRole(int id, UpdateUserRoleRequest update)
+        {
+            var user = GetById(id);
+
             user.Role = update.Role;
 
             _context.Users.Update(user);

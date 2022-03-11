@@ -1,6 +1,4 @@
-﻿using MyFace.Models.Database;
-
-namespace MyFace.Models.Request
+﻿namespace MyFace.Models.Request
 {
     public class UpdateUserRequest
     {
@@ -10,6 +8,5 @@ namespace MyFace.Models.Request
         public string Email { get; set; }
         public string ProfileImageUrl { get; set; }
         public string CoverImageUrl { get; set; }
-        public UserType Role { get; set; }
     }
 }

@@ -27,7 +27,7 @@ namespace MyFace.Models.Request
         [Required]
         [StringLength(16, MinimumLength = 8)]
         public string Password { get; set; }
-        //public UserType Role { get; set; }
+        public UserType Role { get; set; }
 
     }
 }
